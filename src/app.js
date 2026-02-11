@@ -1,8 +1,8 @@
-const express = require("express");
-const app = express();
-app.use(express.json());
+// const express = require("express");
+// const app = express();
+// app.use(express.json());
 
-const noteModel = require("./models/notes.model");
+// const noteModel = require("./models/notes.model");
 
 // const notes = [];
 
@@ -43,47 +43,77 @@ const noteModel = require("./models/notes.model");
 //   })
 // })
 
-app.post("/notes", async (req, res) => {
-  const data = req.body;
-  await noteModel.create({
-    title: data.title,
-    description: data.description,
-  });
+// app.post("/notes", async (req, res) => {
+//   const data = req.body;
+//   await noteModel.create({
+//     title: data.title,
+//     description: data.description,
+//   });
 
-  res.status(201).json({
-    message: "Note Created!",
-  });
-});
+//   res.status(201).json({
+//     message: "Note Created!",
+//   });
+// });
 
-app.get("/notes", async (req, res) => {
-  const notes = await noteModel.find();
+// app.get("/notes", async (req, res) => {
+//   const notes = await noteModel.find();
 
-  res.status(200).json({
-    message: "Notes fetched",
-    notes: notes,
-  });
-});
+//   res.status(200).json({
+//     message: "Notes fetched",
+//     notes: notes,
+//   });
+// });
 
-app.delete("/notes/:id", async (req, res) => {
-  const id = req.params.id;
+// app.delete("/notes/:id", async (req, res) => {
+//   const id = req.params.id;
 
-  await noteModel.findOneAndDelete({
-    _id: id,
-  });
+//   await noteModel.findOneAndDelete({
+//     _id: id,
+//   });
 
-  res.status(200).json({
-    message: "Note Deleted!",
-  });
-});
+//   res.status(200).json({
+//     message: "Note Deleted!",
+//   });
+// });
 
-app.patch("/notes/:id", async (req, res) => {
-  const id = req.params.id;
-  const description = req.body.description;
+// app.patch("/notes/:id", async (req, res) => {
+//   const id = req.params.id;
+//   const description = req.body.description;
 
-  await noteModel.findOneAndUpdate({ _id: id }, { description: description });
+//   await noteModel.findOneAndUpdate({ _id: id }, { description: description });
 
-  res.status(200).json({
-    message: "Note Updated!"
+//   res.status(200).json({
+//     message: "Note Updated!"
+//   })
+// });
+
+// module.exports = app;
+
+const express = require("express");
+const multer = require("multer");
+const uploadFile = require("./services/storage.service");
+const postModel = require("./models/post.model")
+
+const app = express();
+app.use(express.json());
+
+const upload = multer({ storage: multer.memoryStorage() });
+
+app.post("/create-post", upload.single("image"), async (req, res) => {
+  // console.log(req.body);
+  // console.log(req.file);
+
+  const result = await uploadFile(req.file.buffer);
+  console.log(result);
+
+  const post = await postModel.create({
+    image: result.url,
+    caption: req.body.caption
+  })
+
+  return res.status(201).json({
+    message: "POST CREATED!",
+    post
   })
 });
 
