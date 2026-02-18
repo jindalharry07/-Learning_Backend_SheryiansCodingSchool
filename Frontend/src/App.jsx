@@ -1,6 +1,6 @@
 import React from 'react'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
-import CreatPost from './pages/CreatPost';
+import CreatPost from './pages/CreatePost';
 import Feed from './pages/Feed'
 
 export const App = () => {
